@@ -124,7 +124,8 @@ if (navigator.mozGetUserMedia) {
     to.play();
   };
 
-} else if (navigator.webkitGetUserMedia) {
+}
+else if (navigator.webkitGetUserMedia) {
   console.log('This appears to be Chrome');
 
   window.webrtcDetectedBrowser = 'chrome';

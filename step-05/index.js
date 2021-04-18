@@ -2,15 +2,37 @@
 
 var os = require('os');
 var nodeStatic = require('node-static');
-var http = require('http');
 var socketIO = require('socket.io');
+var express = require('express');
+var https = require('https');
+var http = require('http');
+var fs = require('fs');
 
-var fileServer = new(nodeStatic.Server)();
-var app = http.createServer(function(req, res) {
-  fileServer.serve(req, res);
-}).listen(8080);
+var options = {
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem')
+};
 
-var io = socketIO.listen(app);
+// Create a service (the app object is just a callback).
+var app = express();
+app.use(express.static('.'))
+
+// Create an HTTP service.
+//http.createServer(app).listen(80);
+// Create an HTTPS service identical to the HTTP service.
+const server = https.createServer(options, app).listen(443);
+// const server = app.listen(port, () => {
+//   console.log("Listening on port: " + port);
+// });
+const io = require('socket.io')(server);
+
+
+// var fileServer = new(nodeStatic.Server)();
+// var app = http.createServer(function(req, res) {
+//   fileServer.serve(req, res);
+// }).listen(8080);
+
+//var io = socketIO.listen(app);
 io.sockets.on('connection', function(socket) {
 
   // convenience function to log server messages on the client
